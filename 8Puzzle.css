@@ -1,0 +1,53 @@
+/**
+ * @package 8 Puzzle
+ * @subpackage Styling
+ * @author Yorick Phoenix <yphoenix@scribblings.com>
+ * @copyright Copyright (c) 2015 Yorick Phoenix, All Rights Reserved
+ */
+
+.frame
+{
+	border: 1px solid black;
+	width: 315px;
+	height: 315px;
+	padding: 2px;
+	position: relative;
+}
+
+.tile
+{
+	width: 100px;
+	height: 100px;
+	border: 1px solid black;
+	font-size: 87px;
+	text-align: center;
+	margin: 1px;
+	position: absolute;
+    cursor:pointer;
+}
+
+.tile:hover
+{
+	background: black;
+	color: white;
+}
+
+.tile[x="1"]
+{
+	left: 107px;
+}
+
+.tile[x="2"]
+{
+	left: 212px;
+}
+
+.tile[y="1"]
+{
+	top: 107px;
+}
+
+.tile[y="2"]
+{
+	top: 212px;
+}
