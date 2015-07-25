@@ -1,2 +1,2 @@
 # 8puzzle
-8 Puzzle
+Simple implementation of the 8 Puzzle in Javascript, CSS & HTML.

@@ -31,23 +31,3 @@
 	background: black;
 	color: white;
 }
-
-.tile[x="1"]
-{
-	left: 107px;
-}
-
-.tile[x="2"]
-{
-	left: 212px;
-}
-
-.tile[y="1"]
-{
-	top: 107px;
-}
-
-.tile[y="2"]
-{
-	top: 212px;
-}

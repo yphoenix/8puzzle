@@ -10,6 +10,13 @@ $(document).ready(
 	{
 		'use strict';
 
+		var tiles = [[],[],[]];
+
+		function randomIntFromInterval(min,max)
+		{
+		    return Math.floor(Math.random() * (max - min + 1) + min);
+		}
+
 		function FindEmpty(pos)
 		{
 			var res;
@@ -21,7 +28,7 @@ $(document).ready(
 			else
 			if (pos.x < 2 && IsEmpty(pos, 1, 0))
 			{
-				res = {"x": pos.x + 1, "y": pos.y};;
+				res = {"x": pos.x + 1, "y": pos.y};
 			}
 			else
 			if (pos.y > 0 && IsEmpty(pos, 0, -1))
@@ -39,22 +46,40 @@ $(document).ready(
 
 		function FindTile(pos)
 		{
-			return $('.tile[x="' + pos.x + '"][y="' + pos.y + '"]');
+			return tiles[pos.x][pos.y];
 		}
 
 		function IsEmpty(pos, deltaX, deltaY)
 		{
-			return FindTile({"x": pos.x + deltaX, "y": pos.y + deltaY}).length === 0;
+			return FindTile({"x": pos.x + deltaX, "y": pos.y + deltaY}) === undefined;
 		}
 
 		function GetCurrentPos(jItem)
 		{
-			return {"x": Number(jItem.attr('x')), "y": Number(jItem.attr('y'))};
+			return {"x": Number(jItem.data('x')), "y": Number(jItem.data('y'))};
 		}
 
-		function SetPosition(jItem, pos)
+		function SetPosition(jItem, pos, speed)
 		{
-			jItem.attr('x', pos.x).attr('y', pos.y);
+			var cur;
+
+			if (speed === undefined)
+			{
+				speed = 200;
+			}
+
+			cur = GetCurrentPos(jItem);
+
+			if (!isNaN(cur.x))
+			{
+				tiles[cur.x][cur.y] = undefined;
+			}
+
+			tiles[pos.x][pos.y] = jItem;
+
+			jItem.data('x', pos.x)
+				 .data('y', pos.y)
+				 .animate({"top": pos.y * 105 + 2, "left": pos.x * 105 + 2}, speed);
 		}
 
 		function HandleClick()
@@ -83,13 +108,13 @@ $(document).ready(
 				{
 					jItem = FindTile({"x": x, "y": y});
 
-					if (jItem.length === 0)
+					if (jItem === undefined)
 					{
 						break;
 					}
 				}
 
-				if (jItem.length === 0)
+				if (jItem === undefined)
 				{
 					break;
 				}
@@ -124,6 +149,66 @@ $(document).ready(
 				}
 			}
 		}
+
+		function RandomizeTiles()
+		{
+			var x, y, done, found, next, jItem;
+
+			done = [];
+
+			for (x = 0; x < 3; x++)
+			{
+				for (y = 0; x < 2 ? y < 3 : y < 2; y++)
+				{
+					found = false;
+
+					do
+					{
+						next = randomIntFromInterval(1, 8);
+
+						if (done.indexOf(next) === -1)
+						{
+							jItem = FindTile({"x": x, "y": y});
+
+							if (jItem)
+							{
+								jItem.text(next);
+							}
+
+							done.push(next);
+							found = true;
+						}
+					} while (!found);
+				}
+			}
+		}
+
+		function CreateTiles()
+		{
+			var x, y, html, jItem, jFrame;
+
+			jFrame = $('.frame');
+
+			for (x = 0; x < 3; x++)
+			{
+				for (y = 0; x < 2 ? y < 3 : y < 2; y++)
+				{
+					html = '<div class=tile></div>';
+
+					jItem = $(html);
+
+					SetPosition(jItem, {"x": x, "y": y}, 0);
+
+					jFrame.append(jItem);
+
+					tiles[x][y] = jItem;
+				}
+			}
+		}
+
+		CreateTiles();
+
+		RandomizeTiles();
 
 		$('.tile').click(HandleClick);
 
