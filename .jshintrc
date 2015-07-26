@@ -1,0 +1,12 @@
+{
+	"browser":	true,
+	"devel":	true,
+	"jquery":	true,
+	"laxbreak": true,
+	"nonbsp":	true,
+	"-W099":	true,
+
+	"-W040":	false,
+	"newcap":	false,
+	"nonew":	false
+}

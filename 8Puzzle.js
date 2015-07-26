@@ -5,17 +5,66 @@
  * @copyright Copyright (c) 2015 Yorick Phoenix, All Rights Reserved
  */
 
+/*global $ */
+
 $(document).ready(
 	function DocumentReady()
 	{
 		'use strict';
 
-		var tiles = [[],[],[]];
+		var tiles = [[],[],[]];		// 3x3 array of jQuery Objects for the tiles
+
+		/**
+		 * Create a random number between min and max
+		 *
+		 * @param {number} min
+		 * @param {number} max
+		 *
+		 * @return {number}
+		 *
+		 * http://stackoverflow.com/questions/4959975/generate-random-value-between-two-numbers-in-javascript
+		 */
 
 		function randomIntFromInterval(min,max)
 		{
 		    return Math.floor(Math.random() * (max - min + 1) + min);
 		}
+
+		/**
+		 * Get the jQuery reference to a Tile.
+		 *
+		 * @param {object} pos - {x: 0-2, y: 0-2}
+		 *
+		 * @return {jQuery}
+		 */
+
+		function GetTile(pos)
+		{
+			return tiles[pos.x][pos.y];
+		}
+
+		/**
+		 * Check if a tile is empty
+		 *
+		 * @param {object} pos		- {x: 0-2, y: 0-2}
+		 * @param {number} deltaX	- Additional offset from pos
+		 * @param {number} deltaY	- Additional offset from pos
+		 *
+		 * @return {Boolean}
+		 */
+
+		function IsEmpty(pos, deltaX, deltaY)
+		{
+			return GetTile({"x": pos.x + deltaX, "y": pos.y + deltaY}) === undefined;
+		}
+
+		/**
+		 * Find the empty square next to a given tile
+		 *
+		 * @param {object} - {x: 0-2, y: 0-2}
+		 *
+		 * @return {object|undefined} - {x: 0-2, y: 0-2} or undefined if there is no space next to that tile
+		 */
 
 		function FindEmpty(pos)
 		{
@@ -44,20 +93,26 @@ $(document).ready(
 			return res;
 		}
 
-		function FindTile(pos)
-		{
-			return tiles[pos.x][pos.y];
-		}
-
-		function IsEmpty(pos, deltaX, deltaY)
-		{
-			return FindTile({"x": pos.x + deltaX, "y": pos.y + deltaY}) === undefined;
-		}
+		/**
+		 * Find the current possition of a tile
+		 *
+		 * @param {jQuery} - Reference to the tile
+		 *
+		 * @param {object} - {x: 0-2, y: 0-2}
+		 */
 
 		function GetCurrentPos(jItem)
 		{
 			return {"x": Number(jItem.data('x')), "y": Number(jItem.data('y'))};
 		}
+
+		/**
+		 * Move a tile to a new position
+		 *
+		 * @param {jQuery} jItem	- jQuery reference to Tile in the DOM
+		 * @param {object} pos   	- new position {x: 0-2, y: 0-2}
+		 * @param {number} [speed]	- optional annimation speed in milliseconds
+		 */
 
 		function SetPosition(jItem, pos, speed)
 		{
@@ -82,6 +137,10 @@ $(document).ready(
 				 .animate({"top": pos.y * 105 + 2, "left": pos.x * 105 + 2}, speed);
 		}
 
+		/**
+		 * Handle a click on a tile
+		 */
+
 		function HandleClick()
 		{
 			var jItem, pos, freeSpace;
@@ -98,6 +157,12 @@ $(document).ready(
 			}
 		}
 
+		/**
+		 * Find the empty square
+		 *
+		 * @return {object} - {x: 0-2, y: 0-2}
+		 */
+
 		function FindEmptySquare()
 		{
 			var x, y, jItem;
@@ -106,7 +171,7 @@ $(document).ready(
 			{
 				for (y = 0; y < 3; y++)
 				{
-					jItem = FindTile({"x": x, "y": y});
+					jItem = GetTile({"x": x, "y": y});
 
 					if (jItem === undefined)
 					{
@@ -123,9 +188,15 @@ $(document).ready(
 			return {"x": x, "y": y};
 		}
 
+		/**
+		 * Handle an arrow keydown event
+		 *
+		 * @param {Event} evt
+		 */
+
 		function HandleKeyDown(evt)
 		{
-			var map = {"37": {"x":  1, "y":  0}, 	// left
+			var map = {"37": {"x":  1, "y":  0},	// left
 					   "38": {"x":  0, "y":  1},	// up
 					   "39": {"x": -1, "y":  0},	// right
 					   "40": {"x":  0, "y": -1}};	// down
@@ -141,7 +212,7 @@ $(document).ready(
 				tilePos = {"x": emptyPos.x + delta.x,
 						   "y": emptyPos.y + delta.y};
 
-				jItem = FindTile(tilePos);
+				jItem = GetTile(tilePos);
 
 				if (jItem)
 				{
@@ -149,6 +220,10 @@ $(document).ready(
 				}
 			}
 		}
+
+		/**
+		 * Randomize the tiles in the display
+		 */
 
 		function RandomizeTiles()
 		{
@@ -168,7 +243,7 @@ $(document).ready(
 
 						if (done.indexOf(next) === -1)
 						{
-							jItem = FindTile({"x": x, "y": y});
+							jItem = GetTile({"x": x, "y": y});
 
 							if (jItem)
 							{
@@ -182,6 +257,10 @@ $(document).ready(
 				}
 			}
 		}
+
+		/**
+		 * Create the tiles and insert in the DOM
+		 */
 
 		function CreateTiles()
 		{
